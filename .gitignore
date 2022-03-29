@@ -1,0 +1,5 @@
+.*
+!.gitignore
+node_modules
+serve-root
+unity-proj-tmp

@@ -1,0 +1,38 @@
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+.split-flex {
+  display: flex;
+  flex-direction: row;
+}
+
+.gutter.gutter-horizontal {
+  cursor: ew-resize;
+}
+
+.head {
+  height: 2em;
+}
+
+.head-button {
+  height: 100%;
+}
+
+.body {
+  height: calc(100vh - 2em);
+}
+
+#input {
+  font-family: 'Fira Code', 'Courier New';
+  tab-size: 4;
+}
+
+#cpp {
+  overflow: scroll;
+}
+
+#cpp code {
+  font-family: 'Fira Code', 'Courier New';
+}

@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "parcel": "^2.3.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-split": "^2.0.14"
+  },
+  "scripts": {
+    "build": "rm -rf serve-root/* && $(npm bin)/parcel build src/front/index.html --dist-dir serve-root",
+    "start": "node src/back/index.js",
+    "watch": "rm -rf serve-root/* && $(npm bin)/parcel watch src/front/index.html --dist-dir serve-root"
+  }
+}
