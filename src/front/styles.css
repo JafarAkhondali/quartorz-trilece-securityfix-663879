@@ -14,10 +14,19 @@
 
 .head {
   height: 2em;
+  display: flex;
 }
 
-.head-button {
+.head-button, .head-input {
   height: 100%;
+}
+
+.head-input {
+  width: 50vw;
+}
+
+.head-search-container {
+  margin-left: auto;
 }
 
 .body {

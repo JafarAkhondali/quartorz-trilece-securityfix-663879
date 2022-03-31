@@ -1,12 +1,26 @@
 import React from 'react';
 import Split from 'react-split';
 
-const Header = ({ onClickCompile, onClickCheck, message }) => {
+declare const hljs: {
+  highlightAll(): void
+};
+
+const Header = ({ onClickCompile, onClickCheck, message, onClickSearch }) => {
+  const searchInputRef = React.useRef<HTMLInputElement>();
   return (
     <div className="head">
       <button className="head-button" onClick={onClickCompile}>Compile</button>
       <button className="head-button" onClick={onClickCheck}>Check</button>
       {message}
+      <span className="head-search-container">
+        <input className="head-input" type="text" ref={searchInputRef} />
+        <button
+          className="head-button"
+          onClick={() => {
+            onClickSearch(searchInputRef.current.value);
+          }}
+        >Search</button>
+      </span>
     </div>
   );
 };
@@ -23,23 +37,23 @@ function onTextAreaKeyDown(event) {
 }
 
 export default () => {
-  const [compiling, setCompiling] = React.useState(false);
+  const [connecting, setConnecting] = React.useState(false);
   const [message, setMessage] = React.useState('');
-  const textareaRef = React.useRef();
+  const textareaRef = React.useRef<HTMLTextAreaElement>();
   const [cpp, setCpp] = React.useState('');
   const onClick = React.useCallback(async checkOnly => {
-    if (compiling) {
-      alert('compiling');
+    if (connecting) {
+      alert(message);
       return;
     }
-    setCompiling(true);
+    setConnecting(true);
     setMessage('compiling');
     try {
       const response = await fetch(checkOnly ? 'check-csharp' :'csharp', {
         method: 'post',
         body: textareaRef.current.value,
       });
-      setCompiling(false);
+      setConnecting(false);
       if (response.ok) {
         setMessage('succeeded');
         setCpp(await response.text());
@@ -51,15 +65,48 @@ export default () => {
       }
     }
     catch (e) {
-      setCompiling(false);
+      setConnecting(false);
       setMessage('failed');
       setCpp(e.stack);
     }
   }, [textareaRef]);
+  const onClickSearch = React.useCallback(async input => {
+    if (connecting) {
+      alert(message);
+      return;
+    }
+    setConnecting(true);
+    setMessage('searching');
+    try {
+      const response = await fetch(`search?q=${encodeURI(input)}`, {
+        method: 'get'
+      });
+      setConnecting(false);
+      if (response.ok) {
+        setMessage('succeeded');
+        setCpp(await response.text());
+        hljs.highlightAll();
+      }
+      else {
+        setMessage('failed');
+        setCpp(await response.text());
+      }
+    }
+    catch (e) {
+      console.log(e);
+      setConnecting(false);
+      setMessage('failed');
+    }
+  });
 
   return (
     <>
-      <Header onClickCompile={() => onClick(false)} onClickCheck={() => onClick(true)} message={message} />
+      <Header
+        onClickCompile={() => onClick(false)}
+        onClickCheck={() => onClick(true)}
+        message={message}
+        onClickSearch={onClickSearch}
+      />
       <Split
         sizes={[40, 60]}
         direction="horizontal"

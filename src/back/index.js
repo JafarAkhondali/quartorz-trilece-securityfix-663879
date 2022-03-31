@@ -26,6 +26,26 @@ http.createServer(async (request, response) => {
     }
   }
 
+  if (/^\/search(?:\??|$)/.test(request.url)) {
+    try {
+      const [_, queryString] = request.url.split('?', 2);
+      var query = queryString
+        ?.split('&')
+        ?.map(x => x.split('=', 2))
+        ?.reduce((o, [k, v]) => (o[decodeURI(k)] = decodeURI(v), o), {}) ?? {};
+      const result = await unity.search(query.q);
+      response.writeHead(200, { 'Content-Type': 'text/plain' });
+      response.end(result, 'utf-8');
+    }
+    catch (e) {
+      console.log(e);
+      response.writeHead(400, { 'Content-Type': 'text/plain' });
+      response.end(e.stack, 'utf-8');
+      return;
+    }
+    return;
+  }
+
   var filePath = '.' + request.url;
   if (filePath == './') {
     filePath = './index.html';
