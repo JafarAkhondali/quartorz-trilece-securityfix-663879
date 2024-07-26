@@ -5,6 +5,11 @@ const path = require('path');
 const unity = require('./unity');
 
 http.createServer(async (request, response) => {
+    if (path.normalize(decodeURI(request.url)) !== decodeURI(request.url)) {
+        response.statusCode = 403;
+        response.end();
+        return;
+    }
   console.log('request ', request.url);
 
   if (request.url === '/csharp' || request.url === '/check-csharp') {
